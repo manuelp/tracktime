@@ -1,0 +1,4 @@
+syntax: glob
+
+.lein-deps-sum
+lib
