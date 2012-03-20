@@ -10,7 +10,9 @@
 (def tasks (atom [] :validator validate-tasks))
 
 (defn start-task [description]
-  (swap! tasks conj {:desc description :start (new DateTime)}))
+  (do
+    (end-task)
+    (swap! tasks conj {:desc description :start (new DateTime)})))
 
 (defn terminate [task]
   (let [end (new DateTime)
