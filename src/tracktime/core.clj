@@ -27,17 +27,20 @@
 (defn format-csv [task]
   (letfn [(format-period [period]
             (str (.getHours period) "h " (.getMinutes period) "m"))
+          (calculate-minutes [period]
+            (.getMinutes (.toStandardMinutes period)))
           (format-date-time [date]
             (. (new SimpleDateFormat "dd/MM/yyyy HH:mm") format (. date toDate)))]
-    (format "\"%s\",\"%s\",\"%s\",\"%s\""
+    (format "\"%s\",\"%s\",\"%s\",\"%s\",\"%d\""
             (format-date-time (:start task))
             (:desc task)
             (format-date-time (:end task))
-            (format-period (:period task)))))
+            (format-period (:period task))
+            (calculate-minutes (:period task)))))
 
 (defn write-csv [filename]
   (letfn [(format-csv-tasks []
-            (s/join \newline (map format-csv @tasks)))]
+            (s/join \newline (map format-csv (filter :end @tasks))))]
     (spit filename (format-csv-tasks))))
 
 ;; TODO
