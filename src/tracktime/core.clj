@@ -17,12 +17,16 @@
         period (new Period (:start task) end)]
     (assoc task :end end :period period)))
 
+(declare write-csv)
+
 (defn end-task []
   (letfn [(terminate-open-task [tasks]
             (map #(if (not (:end %))
                     (terminate %)
                     %) tasks))]
-    (swap! tasks terminate-open-task)))
+    (do
+      (swap! tasks terminate-open-task)
+      (write-csv "tasks.csv"))))
 
 (defn format-csv [task]
   (letfn [(format-period [period]
