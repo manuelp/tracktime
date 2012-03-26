@@ -118,6 +118,21 @@
       (reset! tasks (map parse-task (s/split data #"\n")))
       [])))
 
+(defn today?
+  "Check if the datetime is today or not."
+  [datetime]
+  (let [now (DateTime.)]
+    (and (= (.getYear datetime) (.getYear now))
+         (= (.getMonthOfYear datetime) (.getMonthOfYear now))
+         (= (.getDayOfMonth datetime) (.getDayOfMonth now)))))
+
+(defn list-today
+  "Prints all today's tasks, sorted by start date-time to *out* in CSV format."
+  []
+  (println (s/join \newline
+                   (map format-csv-task
+                        (filter #(today? (:start %)) (sort-by :start @tasks))))))
+
 (defn -main
   "I don't do a whole lot."
   [& args]
