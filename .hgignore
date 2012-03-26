@@ -3,3 +3,4 @@ syntax: glob
 .lein-deps-sum
 lib
 tasks.csv
+docs
