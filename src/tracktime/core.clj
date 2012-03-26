@@ -4,16 +4,61 @@
 ;;
 ;; Currently it has to be used through the Clojure REPL.
 (ns tracktime.core
-  (require [clojure.string :as s])
+  (require [clojure.string :as s]
+           [tracktime.conf :as conf])
   (import [org.joda.time DateTime Period]
           [org.joda.time.format DateTimeFormat]
-          [java.text SimpleDateFormat]))
+          [java.text SimpleDateFormat]
+          [java.io File]))
+
+(defn parse-date-time
+  "Parse a date-time string into a `DateTime` value, with the
+  following format string: `dd/MM/yyyy HH:mm`"
+  [date-time]
+  (let [format-string "dd/MM/yyyy HH:mm"
+        parser (. DateTimeFormat forPattern format-string)]
+    (. DateTime parse date-time parser)))
+
+(defn parse-row
+  "Parse a string representing a CSV row into a lazy seq of strings."
+  [csv-row]
+  (letfn [(string-field? [field]
+            (not (nil? (re-matches #"\".*\"" field))))
+          (extract-string [field]
+            (apply str (drop-last (rest field))))]
+    (map #(if (string-field? %)
+            (extract-string %)
+            %)
+         (s/split csv-row #","))))
+
+(defn parse-task
+  "Parse a string representing a task in CSV form into a... task map."
+  [csv-task]
+  (let [row (parse-row csv-task)
+        start (parse-date-time (nth row 0))
+        end (parse-date-time (nth row 2))]
+    {:start start
+     :desc (nth row 1)
+     :end end
+     :period (new Period start end)}))
+
+(declare tasks)
+
+(defn read-tasks
+  "Read all the tasks stored in the CSV file into the atom."
+  [filename]
+  (if (. (File. filename) exists)
+    (let [data (slurp filename)]
+      (if-not (empty? data)
+        (reset! tasks (map parse-task (s/split data #"\n")))
+        []))
+    []))
 
 ;; The description is mandatory for every task.
 ;;
 ;; The atom (uncoordinated synchronous state), is initialized with all
 ;; the tasks stored in the CSV file.
-(def tasks (atom (read-tasks "tasks.csv")
+(def tasks (atom (read-tasks conf/csv-file)
                  :validator (partial every? :desc)))
 
 (defn terminate
@@ -37,7 +82,7 @@
             (map #(if-not (:end %) (terminate %) %) tasks))]
     (do
       (swap! tasks terminate-open-task)
-      (write-csv "tasks.csv"))))
+      (write-csv conf/csv-file))))
 
 (defn start-task
   "Starts a new open task, terminating the eventual previous open one.
@@ -76,45 +121,6 @@
   (letfn [(format-csv []
             (s/join \newline (map format-csv-task (filter :end @tasks))))]
     (spit filename (format-csv))))
-
-(defn parse-date-time
-  "Parse a date-time string into a `DateTime` value, with the
-  following format string: `dd/MM/yyyy HH:mm`"
-  [date-time]
-  (let [format-string "dd/MM/yyyy HH:mm"
-        parser (. DateTimeFormat forPattern format-string)]
-    (. DateTime parse date-time parser)))
-
-(defn parse-row
-  "Parse a string representing a CSV row into a lazy seq of strings."
-  [csv-row]
-  (letfn [(string-field? [field]
-            (not (nil? (re-matches #"\".*\"" field))))
-          (extract-string [field]
-            (apply str (drop-last (rest field))))]
-    (map #(if (string-field? %)
-            (extract-string %)
-            %)
-         (s/split csv-row #","))))
-
-(defn parse-task
-  "Parse a string representing a task in CSV form into a... task map."
-  [csv-task]
-  (let [row (parse-row csv-task)
-        start (parse-date-time (nth row 0))
-        end (parse-date-time (nth row 2))]
-    {:start start
-     :desc (nth row 1)
-     :end end
-     :period (new Period start end)}))
-
-(defn read-tasks
-  "Read all the tasks stored in the CSV file into the atom."
-  [filename]
-  (let [data (slurp filename)]
-    (if-not (empty? data)
-      (reset! tasks (map parse-task (s/split data #"\n")))
-      [])))
 
 (defn today?
   "Check if the datetime is today or not."
