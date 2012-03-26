@@ -7,11 +7,6 @@
 
 (def tasks (atom [] :validator validate-tasks))
 
-(defn start-task [description]
-  (do
-    (end-task)
-    (swap! tasks conj {:desc description :start (new DateTime)})))
-
 (defn terminate [task]
   (let [end (new DateTime)
         period (new Period (:start task) end)]
@@ -27,6 +22,11 @@
     (do
       (swap! tasks terminate-open-task)
       (write-csv "tasks.csv"))))
+
+(defn start-task [description]
+  (do
+    (end-task)
+    (swap! tasks conj {:desc description :start (new DateTime)})))
 
 (defn format-csv [task]
   (letfn [(format-period [period]
