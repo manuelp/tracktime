@@ -17,6 +17,11 @@ You can also use [kibit](https://github.com/jonase/kibit) to check the code:
     lein plugin install jonase/kibit 0.0.2
     lein kibit
 
+## TODO
+- Aggregated today's list
+- End task with optional :desc editing
+- Extract CSV lib
+
 ## License
 
 Copyright © 2012 Manuel Paccagnella
