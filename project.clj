@@ -1,4 +1,4 @@
-(defproject tracktime "0.0.1"
+(defproject tracktime "0.0.2"
   :description "A simple CLI time tracker."
   :dev-dependencies [[lein-marginalia "0.7.0"]]
   :dependencies [[org.clojure/clojure "1.3.0"]
