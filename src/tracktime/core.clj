@@ -28,7 +28,7 @@
     (end-task)
     (swap! tasks conj {:desc description :start (new DateTime)})))
 
-(defn format-csv [task]
+(defn format-csv-task [task]
   (letfn [(format-period [period]
             (str (.getHours period) "h " (.getMinutes period) "m"))
           (calculate-minutes [period]
@@ -42,10 +42,11 @@
             (format-period (:period task))
             (calculate-minutes (:period task)))))
 
+(defn format-csv []
+  (s/join \newline (map format-csv-task (filter :end @tasks))))
+
 (defn write-csv [filename]
-  (letfn [(format-csv-tasks []
-            (s/join \newline (map format-csv (filter :end @tasks))))]
-    (spit filename (format-csv-tasks))))
+  (spit filename (format-csv)))
 
 ;; TODO
 (defn read-tasks [filename]
