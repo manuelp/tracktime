@@ -47,7 +47,7 @@
 (defn read-tasks
   "Read all the tasks stored in the CSV file into the atom."
   [filename]
-  (if (. (File. filename) exists)
+  (if (.exists (File. filename))
     (let [data (slurp filename)]
       (if-not (empty? data)
         (reset! tasks (map parse-task (s/split data #"\n")))
