@@ -34,9 +34,7 @@
    into a CSV file."
   []
   (letfn [(terminate-open-task [tasks]
-            (map #(if (not (:end %))
-                    (terminate %)
-                    %) tasks))]
+            (map #(if-not (:end %) (terminate %) %) tasks))]
     (do
       (swap! tasks terminate-open-task)
       (write-csv "tasks.csv"))))
@@ -114,7 +112,7 @@
   "Read all the tasks stored in the CSV file into the atom."
   [filename]
   (let [data (slurp filename)]
-    (if (not (empty? data))
+    (if-not (empty? data)
       (reset! tasks (map parse-task (s/split data #"\n")))
       [])))
 
