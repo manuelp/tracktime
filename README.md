@@ -21,6 +21,7 @@ You can also use [kibit](https://github.com/jonase/kibit) to check the code:
 - Aggregated today's list
 - End task with optional :desc editing
 - Extract CSV lib
+- `list-today` has to support or filter out unterminated tasks
 
 ## License
 
