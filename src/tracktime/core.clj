@@ -42,15 +42,13 @@
      :end end
      :period (new Period start end)}))
 
-(declare tasks)
-
 (defn read-tasks
-  "Read all the tasks stored in the CSV file into the atom."
+  "Read all the tasks stored in the CSV file and converts them into a seq of maps."
   [filename]
   (if (.exists (File. filename))
     (let [data (slurp filename)]
       (if-not (empty? data)
-        (reset! tasks (map parse-task (s/split data #"\n")))
+        (map parse-task (s/split data #"\n"))
         []))
     []))
 
