@@ -89,7 +89,8 @@
   [description]
   (do
     (end-task)
-    (swap! tasks conj {:desc description :start (new DateTime)})))
+    (swap! tasks conj {:desc description :start (new DateTime)})
+    nil))
 
 (defn format-csv-task
   "Formats a single task in a CSV row with the following fields:
