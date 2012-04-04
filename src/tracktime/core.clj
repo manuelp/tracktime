@@ -98,20 +98,32 @@
 - **description**
 - **end date-time**: `dd/MM/yyyy HH:mm`
 - **duration**: `<HH>h <mm>m`
-- **total number of minutes**"
+- **total number of minutes**
+
+This function supports both terminated and unterminated tasks. For
+unterminated tasks, it calculates the elapsed time from start until
+now."
   [task]
   (letfn [(format-period [period]
             (str (.getHours period) "h " (.getMinutes period) "m"))
           (calculate-minutes [period]
             (.getMinutes (.toStandardMinutes period)))
           (format-date-time [date]
-            (. (new SimpleDateFormat "dd/MM/yyyy HH:mm") format (. date toDate)))]
+            (. (new SimpleDateFormat "dd/MM/yyyy HH:mm") format (. date toDate)))
+          (start-to-now [{:keys [start]}]
+            (new Period start (new DateTime)))]
     (format "\"%s\",\"%s\",\"%s\",\"%s\",\"%d\""
             (format-date-time (:start task))
             (:desc task)
-            (format-date-time (:end task))
-            (format-period (:period task))
-            (calculate-minutes (:period task)))))
+            (if (:end task)
+              (format-date-time (:end task))
+              "")
+            (if (:end task)
+              (format-period (:period task))
+              (format-period (start-to-now task)))
+            (if (:end task)
+              (calculate-minutes (:period task))
+              (calculate-minutes (start-to-now task))))))
 
 (defn write-csv
   "Writes to file all *terminated* tasks in the atom formatted into CSV rows."
