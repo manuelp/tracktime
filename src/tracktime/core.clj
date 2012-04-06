@@ -2,7 +2,14 @@
 ;; everyday tasks, and storing all the data into an accessible form
 ;; (useful for search and analysis).
 ;;
-;; Currently it has to be used through the Clojure REPL.
+;; Currently it has to be used through the Clojure REPL. For
+;; reference, the most useful functions from the point of view of a
+;; user are:
+;;
+;; - (start-task desc)
+;; - (end-task)
+;; - (print-today)
+;; - (print-today-aggregated)
 (ns tracktime.core
   (require [clojure.string :as s]
            [tracktime.conf :as conf])
@@ -149,7 +156,7 @@ now."
   []
   (filter #(today? (:start %)) (sort-by :start @tasks)))
 
-(defn list-today
+(defn print-today
   "Prints all today's tasks, sorted by start date-time to *out* in CSV format."
   []
   (println (s/join \newline
@@ -158,16 +165,37 @@ now."
 (defn aggregate
   "Calculate the total number of minutes of all the tasks in the list."
   [list]
-  (letfn [(add-periods [t1 t2]
+  (letfn [(terminated? [task] (:end task))
+          (add-periods [t1 t2]
             (hash-map :period (.plus (:period t1) (:period t2))))]
-    (calculate-minutes (:period (reduce add-periods list)))))
+    (calculate-minutes
+     (:period (reduce add-periods (filter terminated? list))))))
 
-(defn aggregate-all-today
+(defn calculate-today-total
   "Returns the total number of minutes for all the today's closed tasks."
   []
   (aggregate (today-list)))
 
-;;(hash-map :desc (key (first (group-by :desc (today-list)))) :minutes (aggregate (val (first (group-by :desc (today-list))))))
+(defn aggregate-today
+  "Returns a seq of maps that contains aggregated information about
+   today's *completed* tasks. Each map contains:
+
+- *desc*: the textual description of the task
+- *minutes*: the aggregated number of minutes worked for that task,
+             even if splitted between several separated entries."
+  []
+  (letfn [(aggregate-info [agg]
+            (hash-map :desc (key agg) :minutes (aggregate (val agg))))]
+    (map aggregate-info (group-by :desc (today-list)))))
+
+(defn print-today-aggregated
+  "Prints in a readable format the aggregated data for today's
+completed tasks."
+  []
+  (letfn [(format-info-entry [entry]
+            (str (:desc entry) ": " (:minutes entry) "m"))]
+    (println (s/join \newline
+                     (map format-info-entry (aggregate-today))))))
 
 (defn -main
   "I don't do a whole lot."

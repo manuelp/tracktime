@@ -18,7 +18,6 @@ You can also use [kibit](https://github.com/jonase/kibit) to check the code:
     lein kibit
 
 ## TODO
-- Aggregated today's list
 - End task with optional :desc editing
 - Extract CSV lib
 - Separate functional and mutable models
