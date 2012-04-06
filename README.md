@@ -6,7 +6,7 @@ If you feel like criticize or better yet send "patches", feel free to fork this 
 
 ## Usage
 
-You have to use the REPL for now, see the documentation for what functions you can use. Where is the documentation? You can generate it yourself with [Marginalia](https://github.com/fogus/marginalia) using lein:
+You have to use the REPL for now, see the [documentation](http://manuelp.bitbucket.org/tracktime.html) for what functions you can use. Otherwise, you can generate it yourself with [Marginalia](https://github.com/fogus/marginalia) using lein:
 
     lein marg
     
