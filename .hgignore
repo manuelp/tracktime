@@ -4,3 +4,4 @@ syntax: glob
 lib
 tasks.csv
 docs
+tracktime*.jar

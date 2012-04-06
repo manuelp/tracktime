@@ -21,6 +21,7 @@ You can also use [kibit](https://github.com/jonase/kibit) to check the code:
 - End task with optional :desc editing
 - Extract CSV lib
 - Separate functional and mutable models
+- Implement a desktop GUI (with [seesaw](https://github.com/daveray/seesaw#readme)?)
 
 ## License
 
