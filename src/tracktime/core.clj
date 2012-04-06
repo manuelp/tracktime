@@ -92,6 +92,11 @@
     (swap! tasks conj {:desc description :start (new DateTime)})
     nil))
 
+(defn calculate-minutes
+  "Calculate the total number of minutes of a given time period."
+  [period]
+  (.getMinutes (.toStandardMinutes period)))
+
 (defn format-csv-task
   "Formats a single task in a CSV row with the following fields:
 
@@ -107,8 +112,6 @@ now."
   [task]
   (letfn [(format-period [period]
             (str (.getHours period) "h " (.getMinutes period) "m"))
-          (calculate-minutes [period]
-            (.getMinutes (.toStandardMinutes period)))
           (format-date-time [date]
             (. (new SimpleDateFormat "dd/MM/yyyy HH:mm") format (. date toDate)))
           (start-to-now [{:keys [start]}]
@@ -141,12 +144,30 @@ now."
          (= (.getMonthOfYear datetime) (.getMonthOfYear now))
          (= (.getDayOfMonth datetime) (.getDayOfMonth now)))))
 
+(defn today-list
+  "Extract the list of tasks that started today, sorted by start date and time."
+  []
+  (filter #(today? (:start %)) (sort-by :start @tasks)))
+
 (defn list-today
   "Prints all today's tasks, sorted by start date-time to *out* in CSV format."
   []
   (println (s/join \newline
-                   (map format-csv-task
-                        (filter #(today? (:start %)) (sort-by :start @tasks))))))
+                   (map format-csv-task (today-list)))))
+
+(defn aggregate
+  "Calculate the total number of minutes of all the tasks in the list."
+  [list]
+  (letfn [(add-periods [t1 t2]
+            (hash-map :period (.plus (:period t1) (:period t2))))]
+    (calculate-minutes (:period (reduce add-periods list)))))
+
+(defn aggregate-all-today
+  "Returns the total number of minutes for all the today's closed tasks."
+  []
+  (aggregate (today-list)))
+
+;;(hash-map :desc (key (first (group-by :desc (today-list)))) :minutes (aggregate (val (first (group-by :desc (today-list))))))
 
 (defn -main
   "I don't do a whole lot."
