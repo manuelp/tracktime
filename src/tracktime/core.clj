@@ -196,8 +196,3 @@ completed tasks."
             (str (:desc entry) ": " (:minutes entry) "m"))]
     (println (s/join \newline
                      (map format-info-entry (aggregate-today))))))
-
-(defn -main
-  "I don't do a whole lot."
-  [& args]
-  (println "Hello, World!"))
