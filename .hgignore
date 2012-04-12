@@ -5,3 +5,4 @@ lib
 tasks.csv
 docs
 tracktime*.jar
+.lein-plugins
