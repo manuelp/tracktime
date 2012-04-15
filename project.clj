@@ -1,9 +1,10 @@
-(defproject tracktime "0.1.2-SNAPSHOT"
+(defproject tracktime "0.1.2"
   :min-lein-version "2.0.0"
   :description "A simple time tracker."
   :url "https://bitbucket.org/manuelp/tracktime"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :repl-retry-limit 30000
   :plugins [[lein-marginalia "0.7.0"]]
   :dependencies [[org.clojure/clojure "1.3.0"]
                  [joda-time/joda-time "2.1"]

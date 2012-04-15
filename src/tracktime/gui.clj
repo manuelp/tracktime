@@ -34,8 +34,7 @@
 
 (def aggregated-table (table :model (aggregated-table-model)))
 
-(def aggregated-dialog (dialog :modal? true
-                               :title "Today's aggregated tasks"
+(def aggregated-dialog (dialog :title "Today's aggregated tasks"
                                :minimum-size [400 :by 200]
                                :content (mig-panel
                                          :constraints ["", ""]
