@@ -104,14 +104,13 @@
   [period]
   (.getMinutes (.toStandardMinutes period)))
 
-(defn format-csv-task
-  "Formats a single task in a CSV row with the following fields:
+(defn transcode-task
+  "Transform a task by returning a new map with the values changed in this way:
 
 - **start date-time**: `dd/MM/yyyy HH:mm`
 - **description**
 - **end date-time**: `dd/MM/yyyy HH:mm`
 - **duration**: `<HH>h <mm>m`
-- **total number of minutes**
 
 This function supports both terminated and unterminated tasks. For
 unterminated tasks, it calculates the elapsed time from start until
@@ -123,15 +122,29 @@ now."
             (. (new SimpleDateFormat "dd/MM/yyyy HH:mm") format (. date toDate)))
           (start-to-now [{:keys [start]}]
             (new Period start (new DateTime)))]
+    (assoc {}
+      :start (format-date-time (:start task))
+      :desc (:desc task)
+      :end (if (:end task)
+             (format-date-time (:end task))
+             "")
+      :period (if (:end task)
+                (format-period (:period task))
+                (format-period (start-to-now task))))))
+
+(defn format-csv-task
+  "Formats a single task in a CSV row using the *transcode-task* function, plus an additional field (useful for calculations in a spreadsheet application:
+
+- **total number of minutes**"
+  [task]
+  (let [t-task (transcode-task task)
+        start-to-now (fn [{:keys [start]}]
+                       (new Period start (new DateTime)))]
     (format "\"%s\",\"%s\",\"%s\",\"%s\",\"%d\""
-            (format-date-time (:start task))
-            (:desc task)
-            (if (:end task)
-              (format-date-time (:end task))
-              "")
-            (if (:end task)
-              (format-period (:period task))
-              (format-period (start-to-now task)))
+            (:start t-task)
+            (:desc t-task)
+            (:end t-task)
+            (:period t-task)
             (if (:end task)
               (calculate-minutes (:period task))
               (calculate-minutes (start-to-now task))))))

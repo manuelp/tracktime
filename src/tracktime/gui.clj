@@ -2,12 +2,11 @@
   (:use [seesaw core mig]
         tracktime.core))
 
-(def today-table (table :model [
-                                :columns [{:key :start :text "Start"}
+(def today-table (table :model [:columns [{:key :start :text "Start"}
                                           {:key :desc :text "Description"}
                                           {:key :end :text "End"}
                                           {:key :period :text "Duration"}]
-                                :rows @tasks]))
+                                :rows (map transcode-task @tasks)]))
 
 (defn -main [& args]
   (invoke-later
