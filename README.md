@@ -17,14 +17,6 @@ You can also use [kibit](https://github.com/jonase/kibit) to check the code:
     lein plugin install jonase/kibit 0.0.2
     lein kibit
 
-## TODO
-Bold items are done.
-
-- Implement a desktop GUI (with [seesaw](https://github.com/daveray/seesaw#readme)?)
-- End task with optional :desc editing
-- Extract CSV lib
-- Separate functional and mutable models
-
 ## License
 
 Copyright © 2012 Manuel Paccagnella
