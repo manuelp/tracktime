@@ -28,7 +28,7 @@
 
 (defn aggregated-table-model []
   [:columns [{:key :desc :text "Description"}
-             {:key :minutes :text "Minutes"}]
+             {:key :duration :text "Duration"}]
    :rows (core/aggregate-today)])
 
 (def aggregated-table (table :model (aggregated-table-model)))

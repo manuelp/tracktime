@@ -10,6 +10,7 @@
 ;; - (end-task)
 ;; - (print-today)
 ;; - (print-today-aggregated)
+;; - (calculate-today-total)
 (ns tracktime.core
   (require [clojure.string :as s]
            [tracktime.conf :as conf])
@@ -104,6 +105,11 @@
   [period]
   (.getMinutes (.toStandardMinutes period)))
 
+(defn format-period
+  "Format the given period in a string in this form: `HHh MMm`."
+  [period]
+  (str (.getHours period) "h " (.getMinutes period) "m"))
+
 (defn transcode-task
   "Transform a task by returning a new map with the values changed in this way:
 
@@ -116,9 +122,7 @@ This function supports both terminated and unterminated tasks. For
 unterminated tasks, it calculates the elapsed time from start until
 now."
   [task]
-  (letfn [(format-period [period]
-            (str (.getHours period) "h " (.getMinutes period) "m"))
-          (format-date-time [date]
+  (letfn [(format-date-time [date]
             (. (new SimpleDateFormat "dd/MM/yyyy HH:mm") format (. date toDate)))
           (start-to-now [{:keys [start]}]
             (new Period start (new DateTime)))]
@@ -176,29 +180,28 @@ now."
                    (map format-csv-task (today-list)))))
 
 (defn aggregate
-  "Calculate the total number of minutes of all the tasks in the list."
+  "Calculate the total `Period` of time of all the terminated tasks in the list."
   [list]
   (letfn [(terminated? [task] (:end task))
           (add-periods [t1 t2]
             (hash-map :period (.plus (:period t1) (:period t2))))]
-    (calculate-minutes
-     (:period (reduce add-periods (filter terminated? list))))))
+    (:period (reduce add-periods (filter terminated? list)))))
 
 (defn calculate-today-total
-  "Returns the total number of minutes for all the today's closed tasks."
+  "Returns the total time logged for all the today's closed tasks."
   []
-  (aggregate (today-list)))
+  (format-period (aggregate (today-list))))
 
 (defn aggregate-today
   "Returns a seq of maps that contains aggregated information about
    today's *completed* tasks. Each map contains:
 
 - *desc*: the textual description of the task
-- *minutes*: the aggregated number of minutes worked for that task,
-             even if splitted between several separated entries."
+- *duration*: the aggregated time worked for that task,
+            even if splitted between several separated entries."
   []
   (letfn [(aggregate-info [agg]
-            (hash-map :desc (key agg) :minutes (aggregate (val agg))))]
+            (hash-map :desc (key agg) :duration (format-period (aggregate (val agg)))))]
     (map aggregate-info (group-by :desc (today-list)))))
 
 (defn print-today-aggregated
@@ -206,6 +209,6 @@ now."
 completed tasks."
   []
   (letfn [(format-info-entry [entry]
-            (str (:desc entry) ": " (:minutes entry) "m"))]
+            (str (:desc entry) ": " (:duration entry)))]
     (println (s/join \newline
                      (map format-info-entry (aggregate-today))))))
