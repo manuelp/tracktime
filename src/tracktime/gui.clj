@@ -1,12 +1,47 @@
 (ns tracktime.gui
-  (:use [seesaw core mig]
-        tracktime.core))
+  (:use [seesaw core mig table])
+  (:require [tracktime.core :as core]))
 
-(def today-table (table :model [:columns [{:key :start :text "Start"}
-                                          {:key :desc :text "Description"}
-                                          {:key :end :text "End"}
-                                          {:key :period :text "Duration"}]
-                                :rows (map transcode-task @tasks)]))
+(defn today-table-model []
+  [:columns [{:key :start :text "Start"}
+             {:key :desc :text "Description"}
+             {:key :end :text "End"}
+             {:key :period :text "Duration"}]
+   :rows (map core/transcode-task (core/today-list))])
+
+(def today-table (table :model (today-table-model)))
+
+(defn update-table [table]
+  (-> table
+      clear!
+      (config! :model (today-table-model))))
+
+(def current-task-text (text :columns 30))
+
+(def stop-button (button :text "Stop" :enabled? false))
+
+(def start-button (button :text "Start"))
+
+(defn start-task [e]
+   (do
+     (config! current-task-text :enabled? false)
+     (config! start-button :enabled? false)
+     (config! stop-button :enabled? true)
+     (core/start-task (value current-task-text))))
+
+(defn end-task [e]
+  (do
+    (core/end-task)
+    (config! current-task-text :enabled? true)
+    (config! start-button :enabled? true)
+    (config! stop-button :enabled? false)
+    (update-table today-table)))
+
+(listen start-button
+        :mouse-clicked start-task)
+
+(listen stop-button
+        :mouse-clicked end-task)
 
 (defn -main [& args]
   (invoke-later
@@ -17,9 +52,9 @@
                           :items [[(button :text "Aggregated") "wrap"]
                                   [(scrollable today-table) "span 6,grow,shrink 0,wrap"]
                                   [:separator "growx,span 6,wrap"]
-                                  [(text :columns 30) "span 4,growx"] 
-                                  [(button :text "Start")]
-                                  [(button :text "Stop")]])
+                                  [current-task-text "span 4,growx"] 
+                                  [start-button]
+                                  [stop-button]])
                ;:on-close :exit
                )
       pack!
