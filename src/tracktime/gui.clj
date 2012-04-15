@@ -3,16 +3,17 @@
 
 (defn -main [& args]
   (invoke-later
-   (-> (frame :title "TrackTime"
-              :resizable? false
-              ;:minimum-size [500 :by 350]
-              :content (mig-panel
-                        :constraints ["wrap 2", "[fill]5px[shrink 0]"]
-                        :items [["TODO: list of today's tasks" "growx,span"]
-                                [:separator "growx,span"]
-                                [(text :columns 30) "grow"] [(button :text "Start")]])
-              ;:on-close :exit
-              )
-       pack!
-       show!)))
-
+    (-> (frame :title "TrackTime"
+               :resizable? false
+               :content (mig-panel
+                          :constraints ["", ""]
+                          :items [[(button :text "Aggregated") "wrap"]
+                                  ["TODO: list of today's tasks" "span 6,growx,wrap"]
+                                  [:separator "growx,span 6,wrap"]
+                                  [(text :columns 30) "span 4,growx"] 
+                                  [(button :text "Start")]
+                                  [(button :text "Stop")]])
+               ;:on-close :exit
+               )
+      pack!
+      show!)))
