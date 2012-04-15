@@ -59,7 +59,8 @@
     (config! current-task-text :enabled? true)
     (config! start-button :enabled? true)
     (config! stop-button :enabled? false)
-    (update-table today-table (today-table-model))))
+    (update-table today-table (today-table-model))
+    (update-table aggregated-table (aggregated-table-model))))
 
 (defn open-aggregated [e]
   (show! aggregated-dialog))
@@ -87,6 +88,7 @@
                                   [current-task-text "span 4,growx"] 
                                   [start-button]
                                   [stop-button]])
-               :on-close :exit)
+               ;:on-close :exit
+               )
       pack!
       show!)))
