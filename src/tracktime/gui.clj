@@ -1,6 +1,7 @@
 (ns tracktime.gui
   (:use [seesaw core mig table])
-  (:require [tracktime.core :as core]))
+  (:require [tracktime.core :as core])
+  (:gen-class))
 
 ;; Let's define some components.
 

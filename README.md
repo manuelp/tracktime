@@ -1,12 +1,16 @@
 # tracktime
 
-I'm an app. Or maybe I'm a library? I haven't decided yet. However, I'm an (unobtrusive) thing that can help you track the time you spend on tasks every day. If you are interested, clone this repo and use me.
-
-If you feel like criticize or better yet send "patches", feel free to fork this repo and send pull requests.
+This is an (unobtrusive) desktop application that can help you track the time you spend on tasks every day. If you are interested, download the JAR of the last version or clone this repo. If you feel like criticize or better yet send "patches", feel free to fork this repo and send pull requests.
 
 ## Usage
+The simples way to use this application is to download the latest JAR from the *"Downloads"* section up here and run it, for example from the command line:
 
-You have to use the REPL for now, see the [documentation](http://manuelp.bitbucket.org/tracktime.html) for what functions you can use. Otherwise, you can generate it yourself with [Marginalia](https://github.com/fogus/marginalia) using lein:
+    java -jar tracktime-<VERSION>-standalone.jar
+    
+That's it. All your **completed** tasks will be stored in the *tasks.csv* file that will be created in the same directory of the JAR file.
+
+## Documentation
+See the [documentation](http://manuelp.bitbucket.org/tracktime.html) for what functions you can use. Otherwise, you can generate it yourself with [Marginalia](https://github.com/fogus/marginalia) using lein:
 
     lein marg
     
