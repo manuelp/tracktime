@@ -23,11 +23,14 @@
 (def start-button (button :text "Start"))
 
 (defn start-task [e]
-   (do
-     (config! current-task-text :enabled? false)
-     (config! start-button :enabled? false)
-     (config! stop-button :enabled? true)
-     (core/start-task (value current-task-text))))
+  (let [desc (value current-task-text)]
+    (if-not (empty? desc)
+      (do
+        (config! current-task-text :enabled? false)
+        (config! start-button :enabled? false)
+        (config! stop-button :enabled? true)
+        (core/start-task desc))
+      (alert "You need to specify a non-void description!"))))
 
 (defn end-task [e]
   (do
