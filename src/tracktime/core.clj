@@ -185,7 +185,7 @@ now."
   (letfn [(terminated? [task] (:end task))
           (add-periods [t1 t2]
             (hash-map :period (.plus (:period t1) (:period t2))))]
-    (:period (reduce add-periods (filter terminated? list)))))
+    (.normalizedStandard (:period (reduce add-periods (filter terminated? list))))))
 
 (defn calculate-today-total
   "Returns the total time logged for all the today's closed tasks."

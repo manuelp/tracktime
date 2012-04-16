@@ -7,3 +7,4 @@ docs
 tracktime*.jar
 .lein-plugins
 target
+classes

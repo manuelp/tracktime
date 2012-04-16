@@ -87,7 +87,6 @@
                                   [current-task-text "span 4,growx"] 
                                   [start-button]
                                   [stop-button]])
-               ;:on-close :exit
-               )
+               :on-close :exit)
       pack!
       show!)))
