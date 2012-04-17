@@ -32,13 +32,14 @@
              {:key :duration :text "Duration"}]
    :rows (core/aggregate-today)])
 
-(def aggregated-table (table :model (aggregated-table-model)))
-
-(def aggregated-dialog (dialog :title "Today's aggregated tasks"
-                               :minimum-size [400 :by 200]
-                               :content (mig-panel
-                                         :constraints ["", ""]
-                                         :items [[(scrollable aggregated-table) "span 6 6,wrap"]])))
+(defn aggregated-dialog []
+  (let [table (scrollable (table :model (aggregated-table-model)))]
+    (dialog :title "Today's aggregated tasks"
+            :minimum-size [400 :by 200]
+            :on-close :dispose
+            :content (mig-panel
+                      :constraints ["", ""]
+                      :items [[table "span 6 6,wrap"]]))))
 
 ;; Here comes the handlers...
 
@@ -58,11 +59,10 @@
     (config! current-task-text :enabled? true)
     (config! start-button :enabled? true)
     (config! stop-button :enabled? false)
-    (update-table today-table (today-table-model))
-    (update-table aggregated-table (aggregated-table-model))))
+    (update-table today-table (today-table-model))))
 
 (defn open-aggregated [e]
-  (show! aggregated-dialog))
+  (show! (aggregated-dialog)))
 
 ;; ...and the listen bindings.
 
