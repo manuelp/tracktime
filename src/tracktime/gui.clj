@@ -41,6 +41,8 @@
                       :constraints ["", ""]
                       :items [[table "span 6 6,wrap"]]))))
 
+(def elapsed-label (label "00h 00m 00s") )
+
 ;; Here comes the handlers...
 
 (defn start-task [e]
@@ -77,16 +79,17 @@
 
 (defn -main [& args]
   (invoke-later
-    (-> (frame :title "TrackTime"
-               :resizable? false
-               :content (mig-panel
-                          :constraints ["", ""]
-                          :items [[aggregated-button "wrap"]
-                                  [(scrollable today-table) "span 6,grow,shrink 0,wrap"]
-                                  [:separator "growx,span 6,wrap"]
-                                  [current-task-text "span 4,growx"] 
-                                  [start-button]
-                                  [stop-button]])
-               :on-close :exit)
-      pack!
-      show!)))
+   (-> (frame :title "TrackTime"
+              :resizable? false
+              :content (mig-panel
+                        :constraints ["", ""]
+                        :items [[aggregated-button "wrap"]
+                                [(scrollable today-table) "span 6,grow,shrink 0,wrap"]
+                                [:separator "growx,span 6,wrap"]
+                                [current-task-text "span 3,growx"]
+                                [elapsed-label]
+                                [start-button]
+                                [stop-button]])
+              :on-close :exit)
+       pack!
+       show!)))
