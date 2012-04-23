@@ -1,5 +1,5 @@
 (defproject tracktime "0.1.4-SNAPSHOT"
-  :min-lein-version "2.0.0"
+  ;:min-lein-version "2.0.0"
   :description "A simple time tracker."
   :url "https://bitbucket.org/manuelp/tracktime"
   :license {:name "Eclipse Public License"
