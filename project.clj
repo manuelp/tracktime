@@ -1,4 +1,4 @@
-(defproject tracktime "0.1.4-SNAPSHOT"
+(defproject tracktime "0.1.4"
   ;:min-lein-version "2.0.0"
   :description "A simple time tracker."
   :url "https://bitbucket.org/manuelp/tracktime"
