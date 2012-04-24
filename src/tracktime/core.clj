@@ -232,7 +232,14 @@ the unterminated task start (if there is one) in the format: `HHh MMm SSs`.
 
 If all the tasks are terminated, this function returns always `00h 00m 00s`."
   []
-  (let [elapsed (elapsed-time)]
-    (str (.getHours elapsed) "h "
-         (.getMinutes elapsed) "m "
-         (.getSeconds elapsed) "s")))
+  (let [elapsed (elapsed-time)
+        hours (.getHours elapsed)
+        minutes (.getMinutes elapsed)
+        seconds (.getSeconds elapsed)
+        format-num (fn [num]
+                     (if (> num 9)
+                       (str num)
+                       (str "0" num)))]
+    (str (format-num hours) "h "
+         (format-num minutes) "m "
+         (format-num seconds) "s")))
