@@ -1,6 +1,8 @@
 (ns tracktime.gui
-  (:use [seesaw core mig table])
+  (:use [seesaw core mig table]
+        tracktime.executor)
   (:require [tracktime.core :as core])
+  (:import [org.joda.time DateTime Period])
   (:gen-class))
 
 ;; Let's define some components.
@@ -43,6 +45,26 @@
 
 (def elapsed-label (label "00h 00m 00s") )
 
+;; We need a reference to the running timer so that we can effectively
+;; stop it when the current unterminated task is closed.
+(def timer-executor (atom nil))
+
+(defn update-timer
+  "Updates the current elapsed time in the corresponding label since
+the unterminated task has been created."
+  []
+  (config! elapsed-label :text (core/calculate-elapsed-time)))
+
+(defn start-timer
+  "We need a function that updates the timer every second, but only if
+there is an unterminated task."
+  []
+  (reset! timer-executor (execute-every 1 update-timer)))
+
+(defn stop-timer
+  []
+  (cancel-action @timer-executor))
+
 ;; Here comes the handlers...
 
 (defn start-task [e]
@@ -52,12 +74,14 @@
         (config! current-task-text :enabled? false)
         (config! start-button :enabled? false)
         (config! stop-button :enabled? true)
-        (core/start-task desc))
+        (core/start-task desc)
+        (start-timer))
       (alert "You need to specify a non-void description!"))))
 
 (defn end-task [e]
   (do
     (core/end-task)
+    (stop-timer)
     (config! current-task-text :enabled? true)
     (config! start-button :enabled? true)
     (config! stop-button :enabled? false)

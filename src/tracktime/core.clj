@@ -212,3 +212,27 @@ completed tasks."
             (str (:desc entry) ": " (:duration entry)))]
     (println (s/join \newline
                      (map format-info-entry (aggregate-today))))))
+
+(defn open-task
+  "Returns the unterminated task (without and `:end` time) in the seq."
+  [tasks]
+  (first (remove :end tasks)))
+
+(defn elapsed-time
+  "Creates a new `Period` from the start time of"
+  []
+  (let [start-time (:start (open-task @tasks))]
+    (if start-time
+      (new Period start-time (new DateTime))
+      (new Period))))
+
+(defn calculate-elapsed-time
+  "Returns a string representing the elapsed time since
+the unterminated task start (if there is one) in the format: `HHh MMm SSs`.
+
+If all the tasks are terminated, this function returns always `00h 00m 00s`."
+  []
+  (let [elapsed (elapsed-time)]
+    (str (.getHours elapsed) "h "
+         (.getMinutes elapsed) "m "
+         (.getSeconds elapsed) "s")))
